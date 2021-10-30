@@ -27,3 +27,4 @@ backend/instance/empathy_server.sqlite
 backend/empathy_server.sqlite
 *.sqlite
 backend/instance/empathy_server.sqlite
+*.sqlite

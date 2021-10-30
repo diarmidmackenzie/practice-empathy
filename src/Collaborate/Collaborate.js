@@ -1,9 +1,11 @@
 import React from "react";
 import { useState } from "react";
+import { useQuery } from 'react-query'
 import * as constants from "../Needs/needs";
 
 const ROLE_LEADER = 1
 const ROLE_PARTICIPANT = 2
+const BASE_URL = "http://localhost:5000"
 
 function CheckError(response) {
   if (response.status >= 200 && response.status <= 299) {
@@ -23,7 +25,8 @@ export function CollaborateTab(props) {
         <>
           <RoomHeader
            room = {props.room}/>
-          <RoomResults/>
+          <RoomResults
+           room = {props.room}/>
         </>
         )
       }
@@ -63,7 +66,7 @@ function CreateRoom(props) {
 
     function generateRoomId() {
 
-      return fetch('http://127.0.0.1:5000/needs/new_room', {
+      return fetch(`${BASE_URL}/needs/new_room`, {
                    method: 'POST',
                    headers: {
                      'Accept': 'application/json',
@@ -98,7 +101,7 @@ function EnterRoom(props) {
       // prevent page refresh on submit.
       event.preventDefault()
 
-      fetch(`http://127.0.0.1:5000/needs/room_id?room_key=${tempRoomKey}`, {
+      fetch(`${BASE_URL}/needs/room_id?room_key=${tempRoomKey}`, {
                    method: 'GET',
                    headers: {
                      'Accept': 'application/json',
@@ -164,9 +167,26 @@ function NeedsPicker(props) {
 
 function RoomResults(props) {
 
+  const { isLoading: loadingNeeds,
+          error: errorNeeds,
+          data : needs } = useQuery('needs', () =>
+       fetch(`${BASE_URL}/needs/needs?room=${props.room.id}`).then(res =>
+         res.json()
+       )
+     )
+
+     if (loadingNeeds) return 'Loading...'
+
+     if (errorNeeds) return 'An error has occurred: ' + errorNeeds.message
+
     return (
     <div>
       Room Results
+      {needs.map(need => (
+        <div>
+          {need.need}
+        </div>
+      ))}
     </div>
     )
 }
@@ -184,7 +204,7 @@ function SelectableNeed(props) {
 
       const need_data = {'room' : props.room_id, 'need': need}
 
-      return fetch(`http://127.0.0.1:5000/needs/add_need`, {
+      return fetch(`${BASE_URL}/needs/add_need`, {
                    method: 'POST',
                    headers: {
                      'Accept': 'application/json',
