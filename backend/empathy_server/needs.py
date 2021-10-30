@@ -2,7 +2,7 @@ import functools
 import time
 import json
 from flask import (
-    Blueprint, request
+    Blueprint, request, jsonify
 )
 from empathy_server.db import (get_db,
                                db_add_row,
@@ -38,9 +38,8 @@ def room_needs():
         return("{}")
 
     needs = db_room_needs(room_id)
-    json_text = json.dumps(needs)
 
-    return (json_text)
+    return needs
 
 
 @bp.route('/add_need', methods = ['POST'])
@@ -54,17 +53,16 @@ def add_need():
 @bp.route('/new_room', methods = ['POST'])
 def new_room():
     print("POST: /new_room")
-    text = process_new_room()
-    return text
+    room_data = process_new_room()
+    return room_data
 
 def process_new_room():
 
     id, key = db_create_room()
 
-    dictionary = {'id': id, 'key': key}
-    json_text = json.dumps(dictionary)
+    room_data = {'id': id, 'key': key}
 
-    return json_text
+    return room_data
 
 # JSON to process should be of the following form.
 # {

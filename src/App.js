@@ -1,18 +1,31 @@
 import React from "react";
-//import { useState } from "react";
+import { useState } from "react";
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { CollaborateTab } from './Collaborate/Collaborate';
 import 'react-tabs/style/react-tabs.css';
 
+const queryClient = new QueryClient()
+
+
 function App() {
   return (
-    <div className="App">
-        <NVCApp/>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <div className="App">
+          <NVCApp/>
+      </div>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }
 
 function NVCApp() {
+
+  /* Collaboration state tthat we want to maintain when switching tabs is kept
+     at this level */
+  const [collaborationRoom, setCollaborationRoom] = useState("");
+  const [collaborationRole, setCollaborationRole] = useState(0);
 
     return (
       <>
@@ -29,7 +42,13 @@ function NVCApp() {
           <TabPanel>
           </TabPanel>
           <TabPanel>
-            <CollaborateTab/>
+            <CollaborateTab
+             room = {collaborationRoom}
+             role = {collaborationRole}
+             setRoom = {setCollaborationRoom}
+             setRole = {setCollaborationRole}/>
+          </TabPanel>
+          <TabPanel>
           </TabPanel>
           <TabPanel>
           </TabPanel>

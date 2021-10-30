@@ -6,27 +6,24 @@ const ROLE_PARTICIPANT = 2
 
 export function CollaborateTab(props) {
 
-    const [room, setRoom] = useState("");
-    const [role, setRole] = useState(0);
-
     var html
 
-    if (room) {
-      if (role === ROLE_LEADER) {
+    if (props.room) {
+      if (props.role === ROLE_LEADER) {
         html = (
         <>
           <RoomHeader
-           room = {room}/>
+           room = {props.room}/>
           <RoomResults/>
         </>
         )
       }
       else {
-        console.assert(role === ROLE_PARTICIPANT)
+        console.assert(props.role === ROLE_PARTICIPANT)
         html = (
           <>
             <RoomHeader
-             room = {room}/>
+             room = {props.room}/>
             <NeedsPicker/>
           </>
         )
@@ -36,11 +33,11 @@ export function CollaborateTab(props) {
       html = (
         <>
           <CreateRoom
-           setRoom = {setRoom}
-           setRole = {setRole}/>
+           setRoom = {props.setRoom}
+           setRole = {props.setRole}/>
           <EnterRoom
-           setRoom = {setRoom}
-           setRole = {setRole}/>
+           setRoom = {props.setRoom}
+           setRole = {props.setRole}/>
         </>
       )
     }
@@ -56,15 +53,24 @@ function CreateRoom(props) {
 
     function generateRoomId() {
 
-      var roomID = "ABCD"
-      props.setRoom(roomID)
-      props.setRole(ROLE_LEADER)
+      return fetch('http://127.0.0.1:5000/needs/new_room', {
+                   method: 'POST',
+                   headers: {
+                     'Accept': 'application/json',
+                     'Content-Type': 'application/json'
+                   },
+                 })
+        .then(response => response.json())
+        .then(data => {
+          props.setRoom(data['key'])
+          props.setRole(ROLE_LEADER)
+        });
     }
 
     return (
-    <>
-      <button onClick={() => generateRoomId()}>Create Room</button>
-    </>
+      <>
+        <button onClick={() => generateRoomId()}>Create Room</button>
+      </>
     )
 }
 
