@@ -38,9 +38,9 @@ def room_needs():
         return("{}")
 
     needs = db_room_needs(room_id)
+    json_text = json.dumps(needs)
 
-    return needs
-
+    return json_text    
 
 @bp.route('/add_need', methods = ['POST'])
 def add_need():

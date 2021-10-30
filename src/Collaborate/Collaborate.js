@@ -1,14 +1,15 @@
 import React from "react";
 import { useState } from "react";
+import * as constants from "../Needs/needs";
+
 const ROLE_LEADER = 1
 const ROLE_PARTICIPANT = 2
-
 
 export function CollaborateTab(props) {
 
     var html
 
-    if (props.room) {
+    if (props.room.key) {
       if (props.role === ROLE_LEADER) {
         html = (
         <>
@@ -24,7 +25,8 @@ export function CollaborateTab(props) {
           <>
             <RoomHeader
              room = {props.room}/>
-            <NeedsPicker/>
+            <NeedsPicker
+             room = {props.room}/>
           </>
         )
       }
@@ -62,8 +64,8 @@ function CreateRoom(props) {
                  })
         .then(response => response.json())
         .then(data => {
-          props.setRoom(data['key'])
           props.setRole(ROLE_LEADER)
+          props.setRoom({key: data['key'], id: data['id']})
         });
     }
 
@@ -76,16 +78,18 @@ function CreateRoom(props) {
 
 function EnterRoom(props) {
 
-    const [roomID, setRoomID] = useState('');
+    const [tempRoomID, setTempRoomID] = useState('');
 
     function handleChange(event) {
-      setRoomID(event.target.value);
+      setTempRoomID(event.target.value);
     }
 
     function handleSubmit() {
 
-      props.setRoom(roomID)
       props.setRole(ROLE_PARTICIPANT)
+      props.setRoom({key: tempRoomID, id: 1})
+      // Future: check room ID is valid...
+      // also need to get room ID!!!
     }
 
     return (
@@ -93,7 +97,7 @@ function EnterRoom(props) {
         <form onSubmit={handleSubmit}>
           <label>
             Name:
-            <input type="text" value={roomID} onChange={handleChange} />
+            <input type="text" value={tempRoomID} onChange={handleChange} />
           </label>
           <input type="submit" value="Enter Room" />
         </form>
@@ -105,7 +109,7 @@ function RoomHeader(props) {
 
     return (
     <div>
-      Room ID: {props.room}
+      Room ID: {props.room.key}
     </div>
     )
 }
@@ -115,6 +119,13 @@ function NeedsPicker(props) {
     return (
     <div>
       Select Needs
+      {constants.needs.map(need => (
+        <SelectableNeed
+         key={need.need}
+         need={need.need}
+         room_id={props.room.id}
+        />
+      ))}
     </div>
     )
 }
@@ -126,4 +137,46 @@ function RoomResults(props) {
       Room Results
     </div>
     )
+}
+
+function SelectableNeed(props) {
+
+  const [selected, setSelected] = useState(false);
+
+  function addNeedToRoom(need) {
+
+    // we only add a need once.
+    if (!selected) {
+
+      console.log(`Add need ${need}`)
+
+      function CheckError(response) {
+        if (response.status >= 200 && response.status <= 299) {
+          return response.json();
+        } else {
+          throw Error(response.statusText);
+        }
+      }
+
+      const need_data = {'room' : props.room_id, 'need': need}
+
+      return fetch(`http://127.0.0.1:5000/needs/add_need`, {
+                   method: 'POST',
+                   headers: {
+                     'Accept': 'application/json',
+                     'Content-Type': 'application/json'
+                   },
+                   body: JSON.stringify(need_data)
+                 })
+        .then(CheckError)
+        .then(setSelected(true));
+    }
+  }
+
+  return (
+    <button onClick={() => addNeedToRoom(props.need)}>
+      {props.need}
+    </button>
+  )
+
 }

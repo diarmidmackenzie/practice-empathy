@@ -24,7 +24,7 @@ function NVCApp() {
 
   /* Collaboration state tthat we want to maintain when switching tabs is kept
      at this level */
-  const [collaborationRoom, setCollaborationRoom] = useState("");
+  const [collaborationRoom, setCollaborationRoom] = useState({key: "", id: 0});
   const [collaborationRole, setCollaborationRole] = useState(0);
 
     return (

@@ -24,3 +24,4 @@ yarn-error.log*
 *.pyc
 backend/instance/empathy_server.sqlite
 backend/instance/empathy_server.sqlite
+backend/empathy_server.sqlite
