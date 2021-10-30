@@ -54,7 +54,6 @@ def db_create_room():
     ## TO DO - logic to de-duplicate clashing keys...
 
     values = (room_key,)
-    print(values)
     sql_command = """INSERT INTO rooms
                      (room_key)
                      VALUES (?);"""
@@ -65,24 +64,37 @@ def db_create_room():
 
     return cursor.lastrowid, room_key
 
-def db_room_needs(room_id):
+def db_room_id_from_key(room_key):
+    values = (room_key,)
+    query = """SELECT room_index FROM rooms
+               WHERE room_key = ?"""
     db = get_db()
     cursor = db.cursor()
+    cursor.execute(query, values)
+
+    row = cursor.fetchone()
+    if (row is not None):
+        id = row['room_index']
+    else:
+        id = 0
+
+    return id
+
+def db_room_needs(room_id):
+
     values = (room_id,)
     query = """SELECT need, created FROM needs
                WHERE room_index = ?"""
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute(query, values)
 
     rows = cursor.fetchall()
-    print("DB ROWS:")
-    print(rows)
 
     # Config sets might have clashing MS Indices
     # So we sort  by db_index, and include MS Index as an additional property.
     needs = []
     for row in rows:
-        print(row)
-        print(row.keys)
         need = {'need' : row['need'],
                 'timestamp' : row['created']}
         needs.append(need)

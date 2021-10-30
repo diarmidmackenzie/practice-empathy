@@ -9,6 +9,7 @@ from empathy_server.db import (get_db,
                                db_list_needs_and_weights,
                                db_create_room,
                                db_room_needs,
+                               db_room_id_from_key,
                                db_add_need_row)
 
 bp = Blueprint('needs', __name__, url_prefix='/needs')
@@ -19,7 +20,7 @@ def hello_world():
 
 @bp.route('/needs')
 def room_needs():
-# Request of form: /needs?room_id=123
+# Request of form: /needs?room=123
 #    json = """
 #    [
 #      {need: "air", timestamp: <timestamp>},
@@ -27,7 +28,7 @@ def room_needs():
 #      {need: "air", timestamp: <timestamp>},
 #   ]
     print("GET: /needs")
-    room = request.args.get('room_id')
+    room = request.args.get('room')
 
     try:
         room_id = int(room)
@@ -40,7 +41,7 @@ def room_needs():
     needs = db_room_needs(room_id)
     json_text = json.dumps(needs)
 
-    return json_text    
+    return json_text
 
 @bp.route('/add_need', methods = ['POST'])
 def add_need():
@@ -55,6 +56,15 @@ def new_room():
     print("POST: /new_room")
     room_data = process_new_room()
     return room_data
+
+@bp.route('/room_id', methods = ['GET'])
+def room_id():
+    print("GET: /room_id")
+
+    room_key = request.args.get('room_key')
+
+    room_id = db_room_id_from_key(room_key)
+    return {'id': room_id}
 
 def process_new_room():
 

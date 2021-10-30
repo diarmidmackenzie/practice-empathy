@@ -33,7 +33,7 @@ def example_post(room_id):
     return
 
 def example_get(room_id):
-    response = requests.get(f"http://127.0.0.1:5000/needs/needs?room_id={room_id}")
+    response = requests.get(f"http://127.0.0.1:5000/needs/needs?room={room_id}")
 
     assert response.status_code == 200
     json_text = response.text
@@ -42,6 +42,15 @@ def example_get(room_id):
     timestamp = dict[0]['timestamp']
 
     assert need == "air"
+
+def get_room_id(room_key, id):
+    response = requests.get(f"http://127.0.0.1:5000/needs/room_id?room_key={room_key}")
+
+    assert response.status_code == 200
+    json_text = response.text
+    dict = json.loads(json_text)
+    room_id = dict['id']
+    assert room_id == id
 
 def example_old_post():
     needs = ["air", "inclusion", "food", "air", "air", "nurture"]
@@ -143,6 +152,7 @@ def test_2():
 def test_3():
     flask_process = initialize_environment()
     room_id, room_key = new_room()
+    get_room_id(room_key, room_id)
     example_post(room_id)
-    #example_get(room_id)
-    #flask_process.terminate()
+    example_get(room_id)
+    flask_process.terminate()
