@@ -1,2 +1,4 @@
 # practice-empathy
- Tools to help developm competence in NVC
+
+ Tools to help develop competence in NVC
+
