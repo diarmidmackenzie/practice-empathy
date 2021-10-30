@@ -5,7 +5,7 @@ import * as constants from "../Needs/needs";
 
 const ROLE_LEADER = 1
 const ROLE_PARTICIPANT = 2
-const BASE_URL = "http://localhost:5000"
+const BASE_URL = "https://practiceempathy.pythonanywhere.com"
 
 function CheckError(response) {
   if (response.status >= 200 && response.status <= 299) {
