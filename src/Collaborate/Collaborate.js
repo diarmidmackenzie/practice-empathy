@@ -5,6 +5,14 @@ import * as constants from "../Needs/needs";
 const ROLE_LEADER = 1
 const ROLE_PARTICIPANT = 2
 
+function CheckError(response) {
+  if (response.status >= 200 && response.status <= 299) {
+    return response.json();
+  } else {
+    throw Error(response.statusText);
+  }
+}
+
 export function CollaborateTab(props) {
 
     var html
@@ -62,7 +70,7 @@ function CreateRoom(props) {
                      'Content-Type': 'application/json'
                    },
                  })
-        .then(response => response.json())
+        .then(CheckError)
         .then(data => {
           props.setRole(ROLE_LEADER)
           props.setRoom({key: data['key'], id: data['id']})
@@ -78,29 +86,53 @@ function CreateRoom(props) {
 
 function EnterRoom(props) {
 
-    const [tempRoomID, setTempRoomID] = useState('');
+    const [tempRoomKey, setTempRoomKey] = useState('');
+    const [errorText, setErrorText] = useState('');
 
     function handleChange(event) {
-      setTempRoomID(event.target.value);
+      setTempRoomKey(event.target.value);
     }
 
-    function handleSubmit() {
+    function handleSubmit(event) {
 
-      props.setRole(ROLE_PARTICIPANT)
-      props.setRoom({key: tempRoomID, id: 1})
-      // Future: check room ID is valid...
-      // also need to get room ID!!!
+      // prevent page refresh on submit.
+      event.preventDefault()
+
+      fetch(`http://127.0.0.1:5000/needs/room_id?room_key=${tempRoomKey}`, {
+                   method: 'GET',
+                   headers: {
+                     'Accept': 'application/json',
+                     'Content-Type': 'application/json'
+                   },
+                 })
+        .then(CheckError)
+        .then(data => {
+
+          const id = data['id']
+
+          if (id > 0) {
+            props.setRole(ROLE_PARTICIPANT)
+            props.setRoom({key: tempRoomKey, id: id})
+            setErrorText("")
+          }
+          else {
+            setErrorText("Room Not Found")
+          }
+        });
     }
 
     return (
       <>
         <form onSubmit={handleSubmit}>
           <label>
-            Name:
-            <input type="text" value={tempRoomID} onChange={handleChange} />
+            Room Key:
+            <input type="text" value={tempRoomKey} onChange={handleChange} />
           </label>
           <input type="submit" value="Enter Room" />
         </form>
+        <div>
+          {errorText}
+        </div>
       </>
     )
 }
@@ -149,14 +181,6 @@ function SelectableNeed(props) {
     if (!selected) {
 
       console.log(`Add need ${need}`)
-
-      function CheckError(response) {
-        if (response.status >= 200 && response.status <= 299) {
-          return response.json();
-        } else {
-          throw Error(response.statusText);
-        }
-      }
 
       const need_data = {'room' : props.room_id, 'need': need}
 
