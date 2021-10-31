@@ -149,7 +149,7 @@ function RoomHeader(props) {
 
     return (
     <div>
-      Room ID: {props.room.key}
+      Room Key: {props.room.key}
       {(props.role === ROLE_LEADER) ?
         " (room owner)" :
         " (room participant)"}
@@ -195,17 +195,20 @@ function NeedsPicker(props) {
 
 function RoomResults(props) {
 
-  const { isLoading: loadingNeeds,
-          error: errorNeeds,
-          data : needs } = useQuery('needs', () =>
-       fetch(`${BASE_URL}/needs/needs?room=${props.room.id}`).then(res =>
-         res.json()
-       )
-     )
+    const { isLoading: loadingNeeds,
+            error: errorNeeds,
+            data : needs } = useQuery('needs', () =>
+        fetch(`${BASE_URL}/needs/needs?room=${props.room.id}`).then(res =>
+              res.json()
+        ),
+        {
+          refetchInterval: 2000
+        }
+    )
 
-     if (loadingNeeds) return 'Loading...'
+    if (loadingNeeds) return 'Loading...'
 
-     if (errorNeeds) return 'An error has occurred: ' + errorNeeds.message
+    if (errorNeeds) return 'An error has occurred: ' + errorNeeds.message
 
     return (
     <div>
