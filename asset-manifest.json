@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/practice-empathy/static/css/main.6dea0f05.chunk.css",
-    "main.js": "/practice-empathy/static/js/main.69ac7457.chunk.js",
-    "main.js.map": "/practice-empathy/static/js/main.69ac7457.chunk.js.map",
+    "main.js": "/practice-empathy/static/js/main.edfbdc25.chunk.js",
+    "main.js.map": "/practice-empathy/static/js/main.edfbdc25.chunk.js.map",
     "runtime-main.js": "/practice-empathy/static/js/runtime-main.3455e75c.js",
     "runtime-main.js.map": "/practice-empathy/static/js/runtime-main.3455e75c.js.map",
     "static/css/2.27175f2b.chunk.css": "/practice-empathy/static/css/2.27175f2b.chunk.css",
@@ -20,6 +20,6 @@
     "static/css/2.27175f2b.chunk.css",
     "static/js/2.cdaef66c.chunk.js",
     "static/css/main.6dea0f05.chunk.css",
-    "static/js/main.69ac7457.chunk.js"
+    "static/js/main.edfbdc25.chunk.js"
   ]
 }
