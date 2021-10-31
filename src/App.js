@@ -32,8 +32,8 @@ function NVCApp() {
         <Tabs>
           <TabList>
             <Tab>Home</Tab>
-            <Tab>Collaborate</Tab>
-            <Tab>Practice</Tab>
+            <Tab>Rooms</Tab>
+            <Tab>Stories</Tab>
             <Tab>Tutorial</Tab>
             <Tab>About</Tab>
             <Tab>FAQ</Tab>

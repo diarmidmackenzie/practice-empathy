@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useQuery } from 'react-query'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import * as constants from "../Needs/needs";
 
 const ROLE_LEADER = 1
@@ -24,8 +25,10 @@ export function CollaborateTab(props) {
         html = (
         <>
           <RoomHeader
-           room = {props.room}/>
-          <RoomResults
+           room = {props.room}
+           role = {props.role}/>
+          <RoomTabs
+           initialTab = {1}
            room = {props.room}/>
         </>
         )
@@ -35,8 +38,10 @@ export function CollaborateTab(props) {
         html = (
           <>
             <RoomHeader
-             room = {props.room}/>
-            <NeedsPicker
+             room = {props.room}
+             role = {props.role}/>
+            <RoomTabs
+             initialTab = {0}
              room = {props.room}/>
           </>
         )
@@ -145,15 +150,38 @@ function RoomHeader(props) {
     return (
     <div>
       Room ID: {props.room.key}
+      {(props.role === ROLE_LEADER) ?
+        " (room owner)" :
+        " (room participant)"}
     </div>
     )
+}
+
+function RoomTabs(props) {
+  return (
+    <Tabs
+     defaultIndex = {props.initialTab}>
+      <TabList>
+        <Tab>Needs</Tab>
+        <Tab>Results</Tab>
+      </TabList>
+      <TabPanel>
+        <NeedsPicker
+         room = {props.room}/>
+      </TabPanel>
+      <TabPanel>
+        <RoomResults
+         room = {props.room}/>
+      </TabPanel>
+    </Tabs>
+  )
 }
 
 function NeedsPicker(props) {
 
     return (
     <div>
-      Select Needs
+      <p>Suggest needs that you think you are hearing.  They will be shared with the others in this room in the "Results" tab.</p>
       {constants.needs.map(need => (
         <SelectableNeed
          key={need.need}
@@ -181,7 +209,7 @@ function RoomResults(props) {
 
     return (
     <div>
-      Room Results
+      <p>As participants in this room suggest needs, they will appear here.</p>
       {needs.map(need => (
         <div>
           {need.need}
