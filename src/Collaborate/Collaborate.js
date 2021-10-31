@@ -50,10 +50,12 @@ export function CollaborateTab(props) {
     else {
       html = (
         <>
-          <CreateRoom
+          <p>Enter a room key here...</p>
+          <EnterRoom
            setRoom = {props.setRoom}
            setRole = {props.setRole}/>
-          <EnterRoom
+          <p>Or create a new room of your own...</p>
+          <CreateRoom
            setRoom = {props.setRoom}
            setRole = {props.setRole}/>
         </>
@@ -151,8 +153,9 @@ function RoomHeader(props) {
     <div>
       Room Key: {props.room.key}
       {(props.role === ROLE_LEADER) ?
-        " (room owner)" :
-        " (room participant)"}
+        " (room owner) " :
+        " (room participant) "}
+      <p>Share this key with others you want to join this room</p>
     </div>
     )
 }
